@@ -58,8 +58,8 @@ class RCL:
                     with tf.name_scope("before"):
                         inputs = tf.placeholder(shape=(None, 784), dtype=tf.float32)
                         y = tf.placeholder(shape=(None, 10), dtype=tf.float32)
-                        layers_dim = [312, 128]
-                        # layers_dim = [1000, 1000]
+                        # layers_dim = [312, 128]
+                        layers_dim = [1000, 1000]
                         w1 = tf.Variable(tf.truncated_normal(shape=(784,layers_dim[0]), stddev=0.01))
                         b1 = tf.Variable(tf.constant(0.1, shape=(layers_dim[0],)))
                         w2 = tf.Variable(tf.truncated_normal(shape=(layers_dim[0],layers_dim[1]), stddev=0.01))
