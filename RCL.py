@@ -39,23 +39,32 @@ class RCL:
 
     def create_mnist_task(self):
         data = pickle.load(open(self.data_path, "rb"))
+        # for i in range(len(data)):
+        #     datasets = list(data[i])
+        #     datasets[0] = datasets[0][:100]
+        #     datasets[1] = datasets[1][:100]
+        #     data[i] = tuple(datasets)
         return data
 
     def train(self):
         self.best_params={}
         self.result_process = []
         for task_id in range(0,self.num_tasks):
+
+            print(f"\n Task {task_id}")
             self.best_params[task_id] = [0,0]
             if task_id == 0:
                 with tf.Graph().as_default() as g:
                     with tf.name_scope("before"):
                         inputs = tf.placeholder(shape=(None, 784), dtype=tf.float32)
                         y = tf.placeholder(shape=(None, 10), dtype=tf.float32)
-                        w1 = tf.Variable(tf.truncated_normal(shape=(784,312), stddev=0.01))
-                        b1 = tf.Variable(tf.constant(0.1, shape=(312,)))
-                        w2 = tf.Variable(tf.truncated_normal(shape=(312,128), stddev=0.01))
-                        b2 = tf.Variable(tf.constant(0.1, shape=(128,)))
-                        w3 = tf.Variable(tf.truncated_normal(shape=(128,10), stddev=0.01))
+                        layers_dim = [312, 128]
+                        # layers_dim = [1000, 1000]
+                        w1 = tf.Variable(tf.truncated_normal(shape=(784,layers_dim[0]), stddev=0.01))
+                        b1 = tf.Variable(tf.constant(0.1, shape=(layers_dim[0],)))
+                        w2 = tf.Variable(tf.truncated_normal(shape=(layers_dim[0],layers_dim[1]), stddev=0.01))
+                        b2 = tf.Variable(tf.constant(0.1, shape=(layers_dim[1],)))
+                        w3 = tf.Variable(tf.truncated_normal(shape=(layers_dim[1],10), stddev=0.01))
                         b3 = tf.Variable(tf.constant(0.1, shape=(10,)))
                         output1 = tf.nn.relu(tf.nn.xw_plus_b(inputs,w1,b1,name="output1"))
                         output2 = tf.nn.relu(tf.nn.xw_plus_b(output1,w2,b2,name="output2"))
@@ -166,7 +175,9 @@ if __name__ == "__main__":
     for index,value in params.items():
         print([_.shape for _ in value[1]], file=f)
         accuracy.append(value[0])
-    print(accuracy,file=f)
+    print('All accuracies: {}'.format(accuracy))
+    print('AVG acc: {}'.format(np.mean(accuracy)))
+    print(accuracy, file=f)
     f.close()
     print(fname)
     name = fname + '.pkl'
